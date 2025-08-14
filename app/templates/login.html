@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-xl font-semibold mb-4">Login</h1>
+{% if error %}<div class="text-red-600 text-sm mb-3">{{ error }}</div>{% endif %}
+<form method="post" action="/login" class="grid gap-3 max-w-sm">
+  <input type="hidden" name="next" value="{{ next or '' }}">
+  <input name="email" type="email" placeholder="Email" class="border rounded-lg px-3 py-2" required>
+  <input name="password" type="password" placeholder="Password" class="border rounded-lg px-3 py-2" required>
+  <button class="btn w-fit">Sign in</button>
+</form>
+<p class="text-sm mt-3">No account? <a class="underline" href="/register">Create one</a></p>
+{% endblock %}

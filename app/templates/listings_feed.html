@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Feed · PartyUp{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-5">
+  <h1 class="text-xl font-semibold">Latest listings</h1>
+  <a href="/listings/new" class="hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-brand-600 text-white hover:bg-brand-700 shadow-sm">
+    <!-- plus icon -->
+    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></svg>
+    New
+  </a>
+</div>
+
+<!-- Filtre çubuğu -->
+<form method="get" action="/feed" class="glass rounded-xl p-3 shadow-sm border border-slate-200 mb-6">
+  <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+    <input name="game" placeholder="Game (e.g. wow, dota2)"
+           value="{{ request.query_params.get('game','') }}"
+           class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-600" />
+    <input name="server" placeholder="Server / Realm"
+           value="{{ request.query_params.get('server','') }}"
+           class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-600" />
+    <input name="region" placeholder="Region (EU, NA, TR)"
+           value="{{ request.query_params.get('region','') }}"
+           class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-600" />
+    <input name="q" placeholder="Tags / keywords (pvp, raid...)"
+           value="{{ request.query_params.get('q','') }}"
+           class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-600" />
+  </div>
+  <div class="mt-3 flex items-center justify-end gap-2">
+    <a href="/feed" class="px-3 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50">Reset</a>
+    <button class="px-3 py-2 rounded-lg bg-brand-600 text-white hover:bg-brand-700">Filter</button>
+  </div>
+</form>
+
+<!-- Grid -->
+<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  {% for item in listings %}
+  <article class="group rounded-2xl bg-white shadow-card border border-slate-200 overflow-hidden hover:-translate-y-0.5 hover:shadow-lg transition">
+    <!-- üst şerit -->
+    <div class="px-4 pt-4 flex items-center justify-between text-[11px] uppercase tracking-wider text-slate-500">
+      <span class="font-medium">{{ item.game|upper }}</span>
+      <time title="{{ item.created_at }}">{{ item.created_at }}</time>
+    </div>
+
+    <div class="px-4 pb-4">
+      <h3 class="mt-2 text-lg font-semibold text-slate-900 group-hover:text-brand-700">
+        {{ item.title }}
+      </h3>
+      <p class="mt-1 text-sm text-slate-600 line-clamp-3">
+        {{ item.description }}
+      </p>
+
+      <!-- meta rozetler -->
+      <div class="mt-3 flex flex-wrap gap-2 text-xs">
+        {% if item.region %}<span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700">{{ item.region }}</span>{% endif %}
+        {% if item.server %}<span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700">{{ item.server }}</span>{% endif %}
+        {% if item.playstyle %}<span class="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">{{ item.playstyle }}</span>{% endif %}
+        {% if item.voice %}<span class="px-2 py-1 rounded-full bg-indigo-100 text-indigo-700">{{ item.voice }}</span>{% endif %}
+        {% if item.language %}<span class="px-2 py-1 rounded-full bg-amber-100 text-amber-800">{{ item.language|upper }}</span>{% endif %}
+        {% if item.tags %}
+          {% for t in item.tags[:3] %}
+            <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700">#{{ t }}</span>
+          {% endfor %}
+          {% if item.tags|length > 3 %}
+            <span class="px-2 py-1 rounded-full bg-slate-100 text-slate-700">+{{ item.tags|length - 3 }}</span>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <!-- game-specific minibilgi -->
+      {% if item.game_specific %}
+      <div class="mt-3 text-xs text-slate-600 flex flex-wrap gap-3">
+        {% if item.game == 'wow' %}
+          {% if item.game_specific.faction %}<span>Faction: <b>{{ item.game_specific.faction }}</b></span>{% endif %}
+          {% if item.game_specific.spec %}<span>Spec: <b>{{ item.game_specific.spec }}</b></span>{% endif %}
+          {% if item.game_specific.ilvl %}<span>ilvl: <b>{{ item.game_specific.ilvl }}</b></span>{% endif %}
+        {% elif item.game == 'dota2' %}
+          {% if item.game_specific.rank_mmr %}<span>MMR: <b>{{ item.game_specific.rank_mmr }}</b></span>{% endif %}
+          {% if item.game_specific.role %}<span>Role: <b>{{ item.game_specific.role }}</b></span>{% endif %}
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- alt eylemler -->
+      <div class="mt-4 flex items-center justify-between">
+        <div class="text-xs text-slate-500">
+          {% if item.team_need and item.team_need.preferred_role %}
+            Needs: <b>{{ item.team_need.preferred_role }}</b>
+          {% endif %}
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="/listings/{{ item.id }}" class="px-3 py-1.5 rounded-lg border border-slate-300 text-sm hover:bg-slate-50">Details</a>
+          <a href="/messages/new?to={{ item.user_id }}&listing={{ item.id }}"
+             class="px-3 py-1.5 rounded-lg bg-brand-600 text-white text-sm hover:bg-brand-700">
+            DM
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+  {% else %}
+    <div class="col-span-full">
+      <div class="rounded-xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
+        No results. Try changing filters.
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- basit sayfalama (varsa) -->
+{% if page and total_pages %}
+  <div class="mt-6 flex items-center justify-center gap-2">
+    {% if page > 1 %}
+      <a class="px-3 py-1.5 rounded-lg border hover:bg-slate-50" href="?page={{ page-1 }}">Prev</a>
+    {% endif %}
+    <span class="text-sm text-slate-600">Page {{ page }} / {{ total_pages }}</span>
+    {% if page < total_pages %}
+      <a class="px-3 py-1.5 rounded-lg border hover:bg-slate-50" href="?page={{ page+1 }}">Next</a>
+    {% endif %}
+  </div>
+{% endif %}
+{% endblock %}

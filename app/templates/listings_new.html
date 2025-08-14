@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-xl font-semibold mb-4">Create listing</h1>
+<form action="/ui/listings" method="post" class="grid gap-3 max-w-2xl">
+  <select name="game" class="border rounded-lg px-3 py-2" required>
+    <option value="wow">WoW</option>
+    <option value="new_world">New World</option>
+    <option value="diablo">Diablo</option>
+    <option value="dota2">Dota 2</option>
+    <option value="knight_online">Knight Online</option>
+  </select>
+  <input name="title" placeholder="Title" class="border rounded-lg px-3 py-2" required>
+  <textarea name="description" placeholder="Description" class="border rounded-lg px-3 py-2" rows="4" required></textarea>
+  <div class="grid grid-cols-2 gap-2">
+    <input name="region" placeholder="Region (EU/NA/...)" class="border rounded-lg px-3 py-2">
+    <input name="server" placeholder="Server" class="border rounded-lg px-3 py-2">
+  </div>
+  <div class="grid grid-cols-2 gap-2">
+    <input name="language" placeholder="Language (en/tr)" class="border rounded-lg px-3 py-2">
+    <input name="voice" placeholder="Voice (discord/...)" class="border rounded-lg px-3 py-2">
+  </div>
+  <input name="playstyle" placeholder="Playstyle (casual/semi-hardcore)" class="border rounded-lg px-3 py-2">
+  <input name="availability" placeholder="Availability (e.g. weeknights 19-22 CET)" class="border rounded-lg px-3 py-2">
+  <input name="tags" placeholder="Tags comma separated (raid,pve,ranked)" class="border rounded-lg px-3 py-2">
+  <button class="btn w-fit">Publish</button>
+</form>
+{% endblock %}

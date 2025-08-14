@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-xl font-semibold mb-4">Profile</h1>
+<form method="post" action="/profile" class="grid gap-3 max-w-sm">
+  <input name="display_name" value="{{ user.display_name or '' }}" placeholder="Display name" class="border rounded-lg px-3 py-2">
+  <input name="language" value="{{ user.language or '' }}" placeholder="Language (en/tr)" class="border rounded-lg px-3 py-2">
+  <button class="btn w-fit">Save</button>
+</form>
+{% endblock %}

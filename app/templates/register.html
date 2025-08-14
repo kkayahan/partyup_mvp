@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-xl font-semibold mb-4">Sign up</h1>
+{% if error %}<div class="text-red-600 text-sm mb-3">{{ error }}</div>{% endif %}
+<form method="post" action="/register" class="grid gap-3 max-w-sm">
+  <input name="display_name" placeholder="Display name" class="border rounded-lg px-3 py-2" required>
+  <input name="email" type="email" placeholder="Email" class="border rounded-lg px-3 py-2" required>
+  <input name="password" type="password" placeholder="Password" class="border rounded-lg px-3 py-2" required>
+  <button class="btn w-fit">Create account</button>
+</form>
+{% endblock %}
